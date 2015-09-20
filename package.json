@@ -1,0 +1,31 @@
+{
+  "name": "cms",
+  "version": "0.0.1",
+  "description": "A complete CMS for node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodejs --harmony tests/test-all.js | tap-spec",
+    "doc": "jsdoc -c doc/jsdoc.js"
+  },
+  "keywords": [
+    "CMS"
+  ],
+  "dependencies": {
+    "koa": "0.21.0",
+    "ect": "0.5.9",
+    "pg": "4.4.1",
+    "pg-native": "1.8.1",
+    "co": "4.6.0",
+    "async": "1.4.2",
+    "koa-router": "5.1.2",
+    "koa-compose": "2.3.0",
+    "koa-vhost": "0.5.0"
+  },
+  "devDependencies": {
+    "tape": "4.0.3",
+    "tap-spec": "4.1.0",
+    "q-io": "1.13.1"
+  },
+  "author": "bitspike",
+  "license": "MIT"
+}
