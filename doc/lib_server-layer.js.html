@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: server-layer.js</title>
+    <title>JSDoc: Source: lib/server-layer.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: server-layer.js</h1>
+    <h1 class="page-title">Source: lib/server-layer.js</h1>
 
     
 
@@ -35,25 +35,27 @@ var http = require('http'),
     generatorManager = require('./generator-manager');
 
 
+module.exports.ServerLayer = ServerLayer;
+module.exports.Server = Server;
+module.exports.SecureServer = SecureServer;
+
 
 /**
  * 
  * @class ServerLayer
  */
-class ServerLayer {
-    constructor(defaultPorts, defaultSecure) {
-        this.defaultPorts = defaultPorts | [];
-        this.defaultSecurePorts = defaultSecure | [];
-        this.portMaps = {}; // [port] -> [sites,...]
-        this.servers = {}; // [port] -> [server]
-    }
+function ServerLayer(defaultPorts, defaultSecure) {
+    this.defaultPorts = defaultPorts | [];
+    this.defaultSecurePorts = defaultSecure | [];
+    this.portMaps = {}; // [port] -> [sites,...]
+    this.servers = {}; // [port] -> [server]
 
     /**
      * Use this method to check if the port settings of a site are
      * compatible to those of the other sites.
      * @private
      */
-    _checkPortCompatibility(site) {
+    this._checkPortCompatibility = function(site) {
         var sitePorts = site.settings.ports
             , result = []
             , t = this;
@@ -96,7 +98,7 @@ class ServerLayer {
         return result;
     }
 
-    _mapSite(site) {
+    this._mapSite = function(site) {
         var sitePorts = site.settings.ports
             t = this;
 
@@ -124,19 +126,19 @@ class ServerLayer {
         });
     }
 
-    _unmapSite(site) {
+    this._unmapSite = function(site) {
         //TODO
     }
 
-    _mountSite(site) {
+    this._mountSite = function(site) {
         //TODO
     }
 
-    _unmountSite(site) {
+    this._unmountSite = function(site) {
         //TODO
     }
 
-    attachSite(site) {
+    this.attachSite = function(site) {
         // Port compatibility check
         var portsOk = (this._checkPortCompatibility(site).length === 0);
         
@@ -146,15 +148,11 @@ class ServerLayer {
         // Update corresponding server
     }
 
-    detachSite(site) {
+    this.detachSite = function(site) {
 
     }
 }
 
-
-class ServerManager {
-
-}
 
 /**
  * The Server class implements http server functionality for the server
@@ -163,22 +161,7 @@ class ServerManager {
  * 
  * @class Server
  */
-class Server extends ServerManager {
-    constructor(port) {
-        super();
-        this._koa = koa();
-        this._server = http.createServer(this._koa.callback());
-        this._siteManager = new generatorManager.GeneratorManager();
-        this.serverType = 'plain';
-        this.port = port;
-        Object.defineProperty(this,
-        'count', {
-            get: () => this._siteManager.count
-        });
-
-        //Initialize
-        this._koa.use(this._siteManager.callback);
-    }
+function Server(port) {
 
     /**
      * Use this method to append a site to the server. If a site with
@@ -186,7 +169,7 @@ class Server extends ServerManager {
      * be overwritten.
      * @param {Site} site - The site to be served by the server.
      */
-    appendSite(site) {
+    this.appendSite = function(site) {
         this._siteManager.push(site.getCallback(), site.name);
     }
 
@@ -196,7 +179,7 @@ class Server extends ServerManager {
      * normally.
      * @param {Site} site - The site to be removed from the server.
      */
-    removeSite(site) {
+    this.removeSite = function(site) {
         this._siteManager.remove(site.name);
     }
 
@@ -207,7 +190,7 @@ class Server extends ServerManager {
      * @returns {Promise} - Returns a promise that will resolve when the
      *  server has started.
      */
-    start() {
+    this.start = function() {
         var t = this;
 
         return new Promise( function(resolve, reject) {
@@ -225,7 +208,7 @@ class Server extends ServerManager {
      * @returns {Promise} - Returns a promise that will resolve when the
      *  server is closed.
      */
-    stop() {
+    this.stop = function() {
         var t = this,
             resultPromise;
     
@@ -235,20 +218,25 @@ class Server extends ServerManager {
 
         return resultPromise;
     }
+    
+    this._koa = koa();
+    this._server = http.createServer(this._koa.callback());
+    this._siteManager = new generatorManager.GeneratorManager();
+    this.serverType = 'plain';
+    this.port = port;
+    Object.defineProperty(this,
+    'count', {
+        get: () => this._siteManager.count
+    });
+
+    //Initialize
+    this._koa.use(this._siteManager.callback);
 }
 
 
-class SecureServer extends ServerManager {
-    constructor(port, options) {
-        super();
-    }
+function SecureServer(port, options) {
 
 }
-
-
-module.exports.ServerLayer = ServerLayer;
-module.exports.Server = Server;
-module.exports.SecureServer = SecureServer;
 </code></pre>
         </article>
     </section>
@@ -259,13 +247,13 @@ module.exports.SecureServer = SecureServer;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-bootstrap.html">bootstrap</a></li><li><a href="module-generator-manager.html">generator-manager</a></li><li><a href="module-site.html">site</a></li><li><a href="module-site-app-manager.html">site-app-manager</a></li><li><a href="module-system.html">system</a></li></ul><h3>Classes</h3><ul><li><a href="module-generator-manager-GeneratorManager.html">GeneratorManager</a></li><li><a href="module-generator-manager-OrderedManp.html">OrderedManp</a></li><li><a href="module-site-app-manager-SiteAppManager.html">SiteAppManager</a></li><li><a href="module-site-Site.html">Site</a></li><li><a href="Server.html">Server</a></li><li><a href="ServerLayer.html">ServerLayer</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-bootstrap.html">bootstrap</a></li><li><a href="module-generator-manager.html">generator-manager</a></li><li><a href="module-site.html">site</a></li><li><a href="module-site-app-manager.html">site-app-manager</a></li><li><a href="module-system.html">system</a></li></ul><h3>Classes</h3><ul><li><a href="module-generator-manager-GeneratorManager.html">GeneratorManager</a></li><li><a href="module-generator-manager-OrderedManp.html">OrderedManp</a></li><li><a href="module-site-app-manager-SiteAppManager.html">SiteAppManager</a></li><li><a href="module-site-Site.html">Site</a></li><li><a href="Server.html">Server</a></li><li><a href="ServerLayer.html">ServerLayer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#appendSite">appendSite</a></li><li><a href="global.html#funcy">funcy</a></li><li><a href="global.html#removeSite">removeSite</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#stop">stop</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Mon Sep 21 2015 23:55:18 GMT+0300 (EEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Mon Sep 21 2015 16:41:01 GMT+0300 (EEST)
 </footer>
 
 <script> prettyPrint(); </script>
